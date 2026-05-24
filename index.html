@@ -1,0 +1,1516 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ódin - Digitální staroseverská svatyně | o-din.xyz</title>
+    <meta name="description" content="Digitální svatyně boha Ódina. Otec bohů, magie run a Valhally.">
+    
+    <!-- Google Fonts: Cinzel pro nadpisy (antický/majestátní vzhled), Raleway pro texty (čisté a moderní) -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Raleway:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* CSS PROMĚNNÉ */
+        :root {
+            --bg-color: #0d1117;
+            --text-color: #d1d5db;
+            --gold: #d4af37;
+            --gold-dim: #997a00;
+            --dark-card: #161b22;
+            --border-glow: rgba(212, 175, 55, 0.3);
+            --font-head: 'Cinzel', serif;
+            --font-body: 'Raleway', sans-serif;
+        }
+
+        /* ZÁKLADNÍ NASTAVENÍ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(212, 175, 55, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 85% 30%, rgba(212, 175, 55, 0.03) 0%, transparent 50%);
+        }
+
+        h1, h2, h3, h4 {
+            font-family: var(--font-head);
+            color: var(--gold);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        p {
+            margin-bottom: 1.2rem;
+            text-align: justify;
+        }
+
+        /* HAVRANI HUGINN A MUNINN */
+        .raven {
+            position: fixed;
+            top: 20%;
+            width: 70px;
+            z-index: 100;
+            cursor: pointer;
+            filter: drop-shadow(0 0 10px rgba(0,0,0,0.8));
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+        
+        .raven-left {
+            left: -15px; /* Huginn */
+        }
+        
+        .raven-right {
+            right: -15px; /* Muninn */
+            transform: scaleX(-1); 
+        }
+
+        .raven-wing {
+            transform-origin: 40px 35px;
+            transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .raven-left:hover { transform: translateX(10px); }
+        .raven-right:hover { transform: scaleX(-1) translateX(10px); }
+
+        .raven:hover .raven-wing, .raven:active .raven-wing {
+            transform: rotate(-40deg);
+        }
+
+        /* HERO SEkCE & OLTÁŘ (Carousel) */
+        .hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 4rem 1rem 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            letter-spacing: 4px;
+            margin-top: 2rem;
+            text-shadow: 0 0 20px var(--border-glow);
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            color: var(--text-color);
+            margin-bottom: 1.5rem;
+            opacity: 0.8;
+        }
+
+        .altar-container {
+            width: 100%;
+            max-width: 400px; 
+            aspect-ratio: 9 / 16;
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid var(--gold-dim);
+            box-shadow: 0 0 40px var(--border-glow);
+            background-color: #000;
+        }
+
+        .carousel-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+            transform: scale(1.05);
+        }
+
+        .carousel-img.active {
+            opacity: 1;
+            transform: scale(1);
+            transition: opacity 2s ease-in-out, transform 10s ease-out;
+        }
+
+        /* BLÓT (VIRTUÁLNÍ OBĚTINA) */
+        .blot-container {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .blot-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.85);
+            color: var(--gold);
+            padding: 1.5rem 2rem;
+            border: 1px solid var(--gold);
+            border-radius: 8px;
+            font-family: var(--font-head);
+            font-size: 1.2rem;
+            text-align: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease-in-out;
+            z-index: 10;
+            width: 85%;
+            box-shadow: 0 0 20px var(--border-glow);
+        }
+
+        .blot-message.show {
+            opacity: 1;
+        }
+
+        /* OBSAH A TEXTY */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .section {
+            margin-bottom: 5rem;
+            background: rgba(22, 27, 34, 0.6);
+            padding: 3rem;
+            border-radius: 12px;
+            border-left: 3px solid var(--gold-dim);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .section h2 {
+            font-size: 2.2rem;
+            border-bottom: 1px solid var(--gold-dim);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .paths-list {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .paths-list > li {
+            margin-bottom: 1.5rem;
+        }
+
+        .paths-list strong {
+            color: var(--gold);
+            font-family: var(--font-head);
+            font-size: 1.2rem;
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+
+        .sub-list {
+            margin-left: 1.5rem;
+            margin-top: 0.5rem;
+            list-style-type: square;
+            color: var(--gold-dim);
+        }
+
+        .sub-list li {
+            margin-bottom: 0.3rem;
+        }
+        
+        .sub-list span {
+            color: var(--text-color);
+        }
+
+        /* TITULY ÓDINA STYLY */
+        .titles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .title-item {
+            background: rgba(13, 17, 23, 0.8);
+            border: 1px solid #30363d;
+            padding: 1.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .title-item:hover {
+            border-color: var(--gold-dim);
+            transform: translateY(-3px);
+        }
+
+        .title-item h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .title-item p {
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        /* INPUTY (Runy a Jména) */
+        .interactive-generator {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .text-input {
+            width: 100%;
+            max-width: 500px;
+            padding: 1rem;
+            background: rgba(13, 17, 23, 0.8);
+            border: 1px solid var(--gold-dim);
+            color: var(--gold);
+            font-family: var(--font-body);
+            font-size: 1.2rem;
+            border-radius: 8px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .text-input:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 15px var(--border-glow);
+        }
+
+        /* RUNOVÁ KALIGRAFIE SPECIFICKÉ */
+        .rune-display {
+            font-size: 3.5rem;
+            color: var(--gold);
+            font-family: 'Segoe UI Symbol', sans-serif;
+            text-shadow: 0 0 15px var(--border-glow);
+            min-height: 5rem;
+            word-break: break-all;
+            letter-spacing: 5px;
+        }
+
+        /* GENERÁTOR JMEN SPECIFICKÉ */
+        .name-display {
+            font-size: 2.2rem;
+            color: var(--gold);
+            font-family: var(--font-head);
+            text-shadow: 0 0 15px var(--border-glow);
+            min-height: 3rem;
+            margin-top: 1rem;
+        }
+
+        /* KVÍZ STYLY */
+        .quiz-container {
+            background: rgba(13, 17, 23, 0.8);
+            border: 1px solid var(--gold-dim);
+            border-radius: 8px;
+            padding: 2.5rem;
+            text-align: center;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .quiz-question {
+            font-size: 1.5rem;
+            color: var(--gold);
+            font-family: var(--font-head);
+            margin-bottom: 2rem;
+        }
+
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .quiz-btn {
+            background: rgba(0,0,0,0.5);
+            border: 1px solid #30363d;
+            color: var(--text-color);
+            padding: 1rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: var(--font-body);
+            font-size: 1.1rem;
+            text-align: left;
+        }
+
+        .quiz-btn:hover {
+            background: rgba(212, 175, 55, 0.15);
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        .quiz-result {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            animation: fadeIn 1s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .quiz-result h3 {
+            font-size: 2.5rem;
+            color: var(--gold);
+            margin-bottom: 1rem;
+            text-shadow: 0 0 15px var(--border-glow);
+        }
+
+        /* MODLITBY (Grid) */
+        .prayers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .prayer-card {
+            background: var(--dark-card);
+            border: 1px solid #30363d;
+            border-radius: 10px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .prayer-card::before {
+            content: "ᛟ";
+            position: absolute;
+            bottom: -20px;
+            right: -10px;
+            font-size: 6rem;
+            color: rgba(212, 175, 55, 0.05);
+            font-family: 'Segoe UI Symbol', sans-serif;
+            pointer-events: none;
+        }
+
+        .prayer-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--gold);
+            box-shadow: 0 10px 20px var(--border-glow);
+        }
+
+        .prayer-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+
+        .prayer-title {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .prayer-subtitle {
+            font-size: 0.9rem;
+            color: #8b949e;
+            font-style: italic;
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+
+        .prayer-text {
+            font-size: 0.95rem;
+            white-space: pre-line;
+            text-align: left;
+        }
+
+        /* TAPETY STYLY */
+        .wallpapers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .wallpaper-item {
+            display: block;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid #30363d;
+            transition: all 0.3s ease;
+            aspect-ratio: 9 / 16;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .wallpaper-item::after {
+            content: "⬇ Stáhnout";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0,0,0,0.8);
+            color: var(--gold);
+            text-align: center;
+            padding: 0.7rem 0;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .wallpaper-item:hover::after {
+            transform: translateY(0);
+        }
+
+        .wallpaper-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+
+        .wallpaper-item:hover {
+            border-color: var(--gold);
+            box-shadow: 0 0 15px var(--border-glow);
+        }
+
+        .wallpaper-item:hover img {
+            transform: scale(1.05);
+        }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 3rem;
+            border-top: 1px solid #30363d;
+            margin-top: 4rem;
+            font-family: var(--font-head);
+            color: var(--gold-dim);
+        }
+
+        /* COOKIES LIŠTA */
+        .cookie-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(13, 17, 23, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid var(--gold-dim);
+            padding: 1.5rem 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
+            z-index: 1000;
+            transform: translateY(100%);
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .cookie-banner.show {
+            transform: translateY(0);
+        }
+
+        .cookie-content h4 {
+            margin-bottom: 0.5rem;
+            font-family: var(--font-head);
+        }
+
+        .cookie-content p {
+            font-size: 0.9rem;
+            margin: 0;
+            text-align: left;
+        }
+
+        .cookie-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: transparent;
+            color: var(--text-color);
+            border: 1px solid var(--gold-dim);
+            padding: 0.6rem 1.2rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: var(--font-body);
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .btn-primary {
+            background: var(--gold-dim);
+            color: #000;
+        }
+
+        .btn-primary:hover {
+            background: var(--gold);
+            box-shadow: 0 0 15px var(--border-glow);
+        }
+
+        /* ODKAZY STYLY */
+        .links-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .links-list li {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .links-list li::before {
+            content: "ᛟ";
+            color: var(--gold-dim);
+            margin-right: 10px;
+            font-size: 1.2rem;
+            font-family: 'Segoe UI Symbol', sans-serif;
+        }
+
+        .links-list a {
+            color: var(--gold);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            word-break: break-all;
+        }
+
+        .links-list a:hover {
+            color: var(--text-color);
+            text-shadow: 0 0 10px var(--border-glow);
+        }
+
+        /* RESPONZIVITA */
+        @media (min-width: 768px) {
+            .cookie-banner {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+            }
+            .cookie-content {
+                max-width: 60%;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .hero-title { font-size: 2.5rem; }
+            .section { padding: 1.5rem; }
+            .altar-container { width: 90%; }
+            .rune-display { font-size: 2.5rem; }
+            /* Na mobilu havrany mírně zprůhledníme, aby neblokovali text, zjeví se po dotyku */
+            .raven { width: 50px; opacity: 0.4; }
+            .raven:hover, .raven:active { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HAVRANI NA OKRAJÍCH -->
+    <div class="raven raven-left" title="Huginn (Myšlenka)">
+        <svg viewBox="0 0 100 100">
+            <!-- Ocas -->
+            <polygon points="20,80 10,95 35,75" fill="#161b22" stroke="#d4af37" stroke-width="2"/>
+            <!-- Tělo -->
+            <path d="M25,75 C20,40 40,20 60,15 C75,10 85,15 85,15 C85,15 75,25 70,30 C70,50 50,75 35,80 Z" fill="#161b22" stroke="#d4af37" stroke-width="2"/>
+            <!-- Zobák -->
+            <polygon points="82,16 98,18 80,24" fill="#997a00"/>
+            <!-- Oko -->
+            <circle cx="68" cy="18" r="2" fill="#d4af37"/>
+            <!-- Křídlo (Animované) -->
+            <path class="raven-wing" d="M40,35 C60,40 70,60 55,75 C40,65 30,50 40,35 Z" fill="#161b22" stroke="#d4af37" stroke-width="2"/>
+        </svg>
+    </div>
+
+    <div class="raven raven-right" title="Muninn (Paměť)">
+        <svg viewBox="0 0 100 100">
+            <!-- Ocas -->
+            <polygon points="20,80 10,95 35,75" fill="#161b22" stroke="#d4af37" stroke-width="2"/>
+            <!-- Tělo -->
+            <path d="M25,75 C20,40 40,20 60,15 C75,10 85,15 85,15 C85,15 75,25 70,30 C70,50 50,75 35,80 Z" fill="#161b22" stroke="#d4af37" stroke-width="2"/>
+            <!-- Zobák -->
+            <polygon points="82,16 98,18 80,24" fill="#997a00"/>
+            <!-- Oko -->
+            <circle cx="68" cy="18" r="2" fill="#d4af37"/>
+            <!-- Křídlo (Animované) -->
+            <path class="raven-wing" d="M40,35 C60,40 70,60 55,75 C40,65 30,50 40,35 Z" fill="#161b22" stroke="#d4af37" stroke-width="2"/>
+        </svg>
+    </div>
+
+    <header class="hero">
+        <div class="altar-container">
+            <!-- Obrázky v poměru 9:16 -->
+            <img src="1.png" alt="Ódinova svatyně 1" class="carousel-img active">
+            <img src="2.png" alt="Ódinova svatyně 2" class="carousel-img">
+            <img src="3.png" alt="Ódinova svatyně 3" class="carousel-img">
+            <img src="4.png" alt="Ódinova svatyně 4" class="carousel-img">
+            <img src="5.png" alt="Ódinova svatyně 5" class="carousel-img">
+            <img src="6.png" alt="Ódinova svatyně 6" class="carousel-img">
+            <img src="7.png" alt="Ódinova svatyně 7" class="carousel-img">
+            
+            <!-- Virtuální zpráva z oběti -->
+            <div class="blot-message" id="blotMessage"></div>
+        </div>
+        
+        <!-- Blót tlačítka -->
+        <div class="blot-container">
+            <button class="btn btn-primary" id="blotCandle">🕯️ Zapálit svíci</button>
+            <button class="btn btn-primary" id="blotMead">🍺 Nalít medovinu</button>
+        </div>
+
+        <h1 class="hero-title">Ódin</h1>
+        <div class="hero-subtitle">Digitální staroseverská svatyně | o-din.xyz</div>
+    </header>
+
+    <main class="container">
+        
+        <!-- Sekce 1: Představení -->
+        <section class="section">
+            <h2>Ódin: Otec bohů v severské mytologii</h2>
+            <p>Ódin je jednou z nejdůležitějších postav severské mytologie. Je uctíván jako nejvyšší bůh, vládce bohů a otec všech lidí (v severské tradici známý jako All-father). Jeho sídlem je zlatý palác Valhalla v říši Ásgard, kam přicházejí duše padlých bojovníků, aby se připravovaly na závěrečnou bitvu světa.</p>
+            <p>Ódin je známý svou obrovskou touhou po vědění a moudrosti. Aby ji získal, neváhal obětovat mnohé, například své vlastní oko, které odevzdal za doušek z pramene moudrosti. Je zobrazován jako moudrý stařec s plnovousem, často v doprovodu dvou havranů (Huginn a Muninn), kteří mu přinášejí zprávy z celého světa, a dvou vlků.</p>
+            <p>Tento bůh není jen vládcem, ale také patronem básníků, králů, magie, války a smrti. Jeho postava je velmi rozporuplná – dokáže být nesmírně moudrý a laskavý, ale stejně tak krutý a nevyzpytatelný. Ódin je klíčovou postavou mýtů o stvoření světa i jeho konci (Ragnarök), kde se aktivně účastní boje proti silám chaosu. Jeho kult a příběhy dodnes fascinují lidi po celém světě svou hloubkou a symbolikou.</p>
+        </section>
+
+        <!-- Nová Sekce: Tituly Ódina -->
+        <section class="section">
+            <h2>Tituly Ódina a jejich význam</h2>
+            <p>Během svých poutí devíti světy získal Ódin bezpočet jmen a titulů. Každý z nich odhaluje část jeho složité, božské povahy.</p>
+            <div class="titles-grid">
+                <div class="title-item">
+                    <h3>Bůh-ochránce</h3>
+                    <p>Mocný ochránce Midgardu a štít těch, kteří s úctou následují staré cesty.</p>
+                </div>
+                <div class="title-item">
+                    <h3>Učitel bohů</h3>
+                    <p>Ten, jenž přináší hlubokou moudrost, magii a strategii ostatním obyvatelům Ásgardu.</p>
+                </div>
+                <div class="title-item">
+                    <h3>Bůh run</h3>
+                    <p>Pán posvátných znaků, vládce utajeného vědění a osudu, které získal svou obětí.</p>
+                </div>
+                <div class="title-item">
+                    <h3>Moudrý</h3>
+                    <p>Bůh, který se nezastavil před žádnou obětí a odevzdal i vlastní oko za doušek z Mímírovy studny.</p>
+                </div>
+                <div class="title-item">
+                    <h3>Bůh lidí</h3>
+                    <p>Průvodce lidského pokolení, inspirátor hrdinů a válečníků.</p>
+                </div>
+                <div class="title-item">
+                    <h3>Tulák</h3>
+                    <p>Poutník v šedém plášti a širokém klobouku, kráčející nepozorován a zkoušející srdce smrtelníků.</p>
+                </div>
+                <div class="title-item">
+                    <h3>Pán Ásů</h3>
+                    <p>Nejvyšší vládce a nezpochybnitelný vůdce celého severského panteonu.</p>
+                </div>
+                <div class="title-item">
+                    <h3>Všeotec (All-father)</h3>
+                    <p>Otec všech bohů, nejvyšší ztělesnění moci a udržovatel vesmírného řádu.</p>
+                </div>
+                <div class="title-item">
+                    <h3>Otec lidstva</h3>
+                    <p>Stvořitel, jenž se svými bratry vdechl život a duši prvním lidem, Askovi a Emble.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sekce 2: Oběť a runy -->
+        <section class="section">
+            <h2>Ódinova oběť: Jak lidstvo získalo runy</h2>
+            <p>Podle severské mytologie nebyly runy darem od bohů, ale výsledkem nesmírného utrpení a Ódinova osobního odhodlání získat pro svět vyšší poznání. Tento příběh je jedním z nejmocnějších mýtů o hledání moudrosti.</p>
+            <p>Ódin se rozhodl, že ovládne tajemství run, které v sobě skrývaly moc nad životem, smrtí i osudem. K jejich získání však musel podstoupit rituál, který balancoval na hraně bytí a nebytí.</p>
+            
+            <h3>Samota na světovém stromě</h3>
+            <p>Ódin se sám obětoval sobě samému. Devět nocí visel proboden vlastním oštěpem na větvi Yggdrasilu, obrovského světového stromu, který spojuje všechny světy. Bez jídla a bez pití, vystaven mrazivým větrům a naprosté samotě, hleděl do hlubin pod sebou.</p>
+            
+            <h3>Zrození run</h3>
+            <p>Když se blížil konec deváté noci, Ódin v bolestech a transu zahlédl runy ležící na zemi. S výkřikem je zachytil a v tu chvíli se mu otevřela veškerá tajemství vesmíru. Získal schopnost uzdravovat, věštit, ovládat mysl nepřátel i utišovat bouře.</p>
+            <p>Tento mýtus zdůrazňuje, že pravá moudrost není zadarmo. Ódinovo „oběšení“ je symbolem šamanského zasvěcení – člověk musí odhodit své staré já, aby skrze bolest a introspekci dosáhl nového, hlubšího porozumění světu. Runy se tak staly posvátným nástrojem, který Ódin předal lidem, aby jim pomáhal na jejich vlastní cestě životem.</p>
+        </section>
+
+        <!-- Sekce 3: Cesty k Ódinovi -->
+        <section class="section">
+            <h2>Cesty k Ódinovi: Jak dnes budovat vztah k tomuto bohu</h2>
+            <p>Uctívání Ódina v moderní době není o slepé poslušnosti, ale o navázání osobního vztahu založeného na respektu, zvídavosti a disciplíně. Protože je Ódin bohem moudrosti, básníků a poutníků, každá cesta k němu je individuální.</p>
+            
+            <ul class="paths-list">
+                <li>
+                    <strong>1. Vytvoření prostoru pro setkání</strong>
+                    Mnoho lidí si doma vytváří jednoduchý „oltář“ nebo vyhrazené místo. Nemusí být složité – stačí svíce, kámen, kousek dřeva nebo symbol havranů. Toto místo slouží jako bod, kde se zastavíte, ztišíte a věnujete čas rozjímání. Je to prostor, kde odkládáte starosti běžného dne a ladíte se na vnitřní klid.
+                </li>
+                <li>
+                    <strong>2. Darování pozornosti (Blót)</strong>
+                    V moderním kontextu není oběť o materiálních věcech, ale o energii a pozornosti. Můžete Ódinovi věnovat:
+                    <ul class="sub-list">
+                        <li><span><strong>Čas:</strong> Četba ság, studium historie nebo učení se něčemu novému.</span></li>
+                        <li><span><strong>Tvorbu:</strong> Psaní básní, kreslení nebo jakýkoli tvůrčí akt.</span></li>
+                        <li><span><strong>Symbolické dary:</strong> Na svůj oltář můžete položit doušek medoviny, kvalitní čaj nebo drobnost, kterou jste našli v přírodě a která vás oslovila. Důležitý je váš vnitřní postoj – dar je výrazem vděčnosti za inspiraci.</span></li>
+                    </ul>
+                </li>
+                <li>
+                    <strong>3. Aktivní hledání pravdy</strong>
+                    Ódin je bohem, který se nespokojí s povrchními odpověďmi. Uctívat ho znamená být upřímný k sobě samému. Prakticky to vypadá tak, že:
+                    <ul class="sub-list">
+                        <li><span>Pravidelně analyzujete své činy a rozhodnutí (jako byste se radili se svým vnitřním Ódinem).</span></li>
+                        <li><span>Snažíte se porozumět souvislostem kolem sebe, místo abyste jen pasivně přijímali názory druhých.</span></li>
+                        <li><span>Překonáváte své strachy – Ódin oceňuje odvahu vykročit do neznáma.</span></li>
+                    </ul>
+                </li>
+                <li>
+                    <strong>4. Napojení skrze přírodu</strong>
+                    Ódin je úzce spjat s větrem, stromy a cykly života. Často se mu vzdává čest při procházkách v lesích, zejména v blízkosti starých stromů. Tím, že vnímáte sílu přírody a její proměnlivost, se přirozeně propojujete s principy, které Ódin představuje.
+                </li>
+            </ul>
+            <p>Uctívání Ódina je celoživotní proces učení. Není to o dosažení cíle, ale o neustálém rozšiřování obzorů a posilování vlastní vnitřní integrity.</p>
+        </section>
+
+        <!-- Sekce 4: Modlitby -->
+        <h2 style="text-align:center; font-size: 2.5rem; margin-top: 4rem;">Posvátná slova a Modlitby</h2>
+        <div class="prayers-grid">
+
+            <div class="prayer-card">
+                <span class="prayer-icon">🌅</span>
+                <h3 class="prayer-title">Ranní modlitba</h3>
+                <span class="prayer-subtitle">Modlitba za jasnou mysl a sílu do nového dne.</span>
+                <div class="prayer-text">Sláva tobě, Ódine, Všeotče,
+který probouzíš svět z temné noci.
+Otevírám oči do nového dne a vítám tvůj dech v korunách stromů.
+Daroval jsi mi život, daroval jsi mi tento den,
+a já slibuji, že ho nepromrhám v nečinnosti.
+Sešli své dva havrany, Huginna a Muninna,
+aby usedli na má ramena a dali mi moudrost v mém rozhodování.
+Ať je můj krok pevný a mé srdce odvážné.
+Sláva tobě na počátku tohoto dne.</div>
+            </div>
+
+            <div class="prayer-card">
+                <span class="prayer-icon">☀️</span>
+                <h3 class="prayer-title">Dopolední modlitba</h3>
+                <span class="prayer-subtitle">Modlitba při práci, studiu nebo každodenním úsilí.</span>
+                <div class="prayer-text">Ódine, Pane run a skrytých tajemství,
+obracím se k tobě uprostřed svého konání.
+Ty, který jsi obětoval oko za doušek z Mímírovy studny,
+znáš cenu tvrdé práce a oběti pro vědění.
+Dej mé ruce obratnost a mé mysli soustředění.
+Ať mé dnešní úsilí nese plody, na které mohu být hrdý.
+Nenech mě sejít z cesty a zažeň únavu,
+která by mi chtěla oslabit vůli.
+Stojím pevně ve tvém jménu.</div>
+            </div>
+
+            <div class="prayer-card">
+                <span class="prayer-icon">🌤️</span>
+                <h3 class="prayer-title">Polední modlitba</h3>
+                <span class="prayer-subtitle">Modlitba v polovině dne, poděkování za sílu a prosba o vytrvalost.</span>
+                <div class="prayer-text">Slunce stojí nejvýše, Ódine, a tvé oko shlíží na Midgard.
+V polovině mého dne se zastavuji, abych ti vzdal úctu.
+Děkuji za sílu, kterou jsi mi dosud propůjčil,
+a za chléb, který sytí mé tělo.
+Den je v půli a cesta přede mnou je ještě dlouhá.
+Osobuj mi vytrvalost, jakou jsi měl ty na stromě Yggdrasil.
+Ať mě neopustí tvá přízeň, až se slunce začne sklánět.
+Tvá síla je mým štítem.</div>
+            </div>
+
+            <div class="prayer-card">
+                <span class="prayer-icon">🦅</span>
+                <h3 class="prayer-title">Oslavná modlitba</h3>
+                <span class="prayer-subtitle">Modlitba k uctění Ódinovy moci, moudrosti a vítězství.</span>
+                <div class="prayer-text">Sláva tobě, Ódine, nejvyšší z bohů!
+Vládče Asgardu, jezdče na osminohém Sleipniru,
+tobě, který držíš neochvějné kopí Gungnir!
+Oslavuji tvou moudrost, kterou jsi vykoupil krví a obětí.
+Oslavuji tvou moc, která chrání naše rody a dává nám odvahu žít.
+Jsi inspirací pro válečníky, zdrojem pro básníky a vůdcem pro hledající.
+Zvedám svůj hlas (i roh) na tvou počest.
+Ať tvé jméno zní skrze věky a skrze devět světů!
+Sláva Ódinovi!</div>
+            </div>
+
+            <div class="prayer-card">
+                <span class="prayer-icon">🌤️</span>
+                <h3 class="prayer-title">Odpolední modlitba</h3>
+                <span class="prayer-subtitle">Modlitba pro překonání únavy a dokončení rozdělané práce.</span>
+                <div class="prayer-text">Slunce se sklání, Ódine, a stíny na Midgardu se prodlužují.
+Mé tělo cítí tíhu dne a má mysl začíná unavovat.
+Volám tě v této hodině, Všeotče, abych načerpal z tvé nezdolné vůle.
+Rozdmýchej ve mně jiskru, která mi pomůže dokončit mé dnešní dílo se ctí.
+Dej mi trpělivost, abych nechyboval těsně před cílem,
+a vytrvalost, s jakou ty sám kráčíš devíti světy.
+Ať je mé odpolední úsilí hodné tvého pohledu.</div>
+            </div>
+
+            <div class="prayer-card">
+                <span class="prayer-icon">🌙</span>
+                <h3 class="prayer-title">Večerní modlitba</h3>
+                <span class="prayer-subtitle">Modlitba za klidný odpočinek, ohlédnutí za dnem a uctění předků.</span>
+                <div class="prayer-text">Den končí, Ódine, a noc přebírá vládu nad světem.
+Odkládám své nástroje a ztišuji svou mysl.
+Děkuji ti za ochranu, kterou jsi mi dnes poskytoval, a za lekce, které jsem dostal.
+Pohlédni na mé dnešní činy – ať jsou v tvých očích spravedlivé.
+Až zavřu oči, pošli mi moudré sny a dovol mému duchu odpočívat v bezpečí tvého stínu.
+Myslím na své předky, kteří již sedí v tvé síni, a s úctou k nim i k tobě uléhám.
+Klidnou noc pod tvými křídly, Všeotče.</div>
+            </div>
+
+            <div class="prayer-card">
+                <span class="prayer-icon">🛡️</span>
+                <h3 class="prayer-title">Modlitba za ochranu</h3>
+                <span class="prayer-subtitle">Modlitba v chvílích nebezpečí, nejistoty nebo před těžkou zkouškou.</span>
+                <div class="prayer-text">Ódine, Vládče run, ty, který ovládáš kouzla a znáš skryté hrozby,
+obracím se k tobě s prosbou o ochranu.
+Buď mým štítem proti viditelným i neviditelným nepřátelům.
+Ať tvé kopí Gungnir odrazí každou zradu, lež a zlobu, která by mě chtěla zasáhnout.
+Sešli své vlky, Geriho a Frekiho, aby střežili mé cesty a odháněli strach z mého srdce.
+Ať kráčím s vědomím, že nade mnou bdí tvé oko.
+Jsem tvůj/tvá a strach přede mnou couvá.</div>
+            </div>
+
+            <div class="prayer-card">
+                <span class="prayer-icon">🌲</span>
+                <h3 class="prayer-title">Modlitba za zdraví</h3>
+                <span class="prayer-subtitle">Modlitba za obnovu sil, pevnost těla a uzdravení.</span>
+                <div class="prayer-text">Všeotče, ty, který jsi poznal bolest a překonal ji na stromě Yggdrasil,
+shlédni na mě v mé slabosti.
+Mé tělo (nebo tělo mého blízkého) potřebuje tvou sílu, aby přemohlo nemoc a únavu.
+Vlij mi do žil divokou krev severských lesů a pevnost starých skal.
+Probuď v mém těle bojovníka, který se nevzdává a rve se o každý doušek života.
+Dej mi sílu unést tuto zkoušku a ukaž mi cestu k uzdravení.
+Věřím ve tvou moc a v moudrost přírody, kterou jsi stvořil.</div>
+            </div>
+
+            <div class="prayer-card">
+                <span class="prayer-icon">📚</span>
+                <h3 class="prayer-title">Za úspěch ve škole</h3>
+                <span class="prayer-subtitle">Modlitba k Ódinovi jako patronu vědění, run a skryté moudrosti.</span>
+                <div class="prayer-text">Ódine, Všeotče, ty, který jsi neváhal obětovat své oko,
+abys získal doušek moudrosti z Mímírovy studny,
+obracím se k tobě před touto zkouškou mých znalostí.
+Odemkni mou mysl, abych si vzpomněl na vše, co jsem se naučil.
+Zažeň zmatek a nervozitu, jež zatemňují úsudek.
+Sešli mi na pomoc bystrost svých havranů, Huginna a Muninna,
+ať mé myšlenky létají rychle a přesně k cíli.
+Dej mi dar jasného slova a pevné ruky, až budu prokazovat své vědění.
+Ať mé úsilí přinese plody, které mě posunou dál.</div>
+            </div>
+
+            <div class="prayer-card">
+                <span class="prayer-icon">🐎</span>
+                <h3 class="prayer-title">Za ochranu na cestách</h3>
+                <span class="prayer-subtitle">Modlitba k vládci cest a poutníků za bezpečný návrat domů.</span>
+                <div class="prayer-text">Ódine, Vládče cest, ty, který sám v přestrojení jako poutník kráčíš světy,
+shlédni na mě, když opouštím svůj práh.
+Sedáš na osminohého Sleipnira a znáš každou nástrahu, která na stezkách číhá.
+Buď mým průvodcem a strážcem na mé dnešní cestě.
+Ochraňuj mě před nehodami, zlými lidmi a nepřízní živlů.
+Ať je má cesta přímá, mé smysly bdělé a mé kroky (nebo kola) bezpečné.
+Dohlédni na to, abych se v pořádku a se ctí vrátil domů, k ohni svého rodu.
+Tvá ochrana kráčí se mnou.</div>
+            </div>
+
+            <div class="prayer-card">
+                <span class="prayer-icon">🍃</span>
+                <h3 class="prayer-title">Za klidnou mysl a proti úzkosti</h3>
+                <span class="prayer-subtitle">Modlitba v chvílích vnitřní bouře, strachu a těžkých myšlenek.</span>
+                <div class="prayer-text">Všeotče, slyš můj hlas v této chvíli vnitřního neklidu.
+Mé srdce bije jako na poplach a má mysl je jako rozbouřené moře.
+Ty, který jsi vydržel devět nocí v krutém větru na stromě Yggdrasil,
+daruj mi kousek své neochvějné pevnosti.
+Zastav ty divoké myšlenky, které mě oslabují, a zažeň stíny úzkosti.
+Vdechni mi do hrudi klid starých severských lesů a chlad ledovců.
+Jsem potomek těch, co se nebáli bouří – připomeň mi mou vlastní sílu.
+Ukotvi mě v přítomnosti a daruj mé duši mír.</div>
+            </div>
+
+            <div class="prayer-card">
+                <span class="prayer-icon">🔥</span>
+                <h3 class="prayer-title">Za lásku a rodinné štěstí</h3>
+                <span class="prayer-subtitle">Modlitba pro pevnost rodinného krbu, věrnost a ochranu blízkých.</span>
+                <div class="prayer-text">Ódine, ochránce rodů a vládce Asgardu, kde sídlíš po boku své ženy Frigg,
+přicházím, abych tě požádal o požehnání pro svůj domov.
+Ať v naší rodině hoří oheň vzájemné úcty, lásky a věrnosti.
+Dej nám sílu držet při sobě, když přijdou těžké časy,
+a moudrost, abychom si neubližovali ostrými slovy.
+Chraň mou rodinu před závistí zvenčí a před svárem zevnitř.
+Ať náš dům prosperuje, krb hřeje a naši blízcí žijí v bezpečí pod tvým dohledem.
+Spoj naše osudy pevnou nití, kterou nic neroztrhne.</div>
+            </div>
+
+            <div class="prayer-card">
+                <span class="prayer-icon">💰</span>
+                <h3 class="prayer-title">Za hojnost a finance</h3>
+                <span class="prayer-subtitle">Modlitba k Ódinovi za odměnu za poctivou práci, moudré nakládání s majetkem a přízeň osudu.</span>
+                <div class="prayer-text">Ódine, Všeotče, majiteli zlatého prstenu Draupniru, z něhož každou devátou noc kápne osm dalších,
+ty znáš hodnotu hojnosti a darů.
+Obracím se k tobě, abych požádal o požehnání pro svou práci a své živobytí.
+Ať mé úsilí přináší spravedlivou odměnu a stůl mého rodu nikdy nezeje prázdnotou.
+Dej mi moudrost runy Fehu – ať majetek, který získám, nepromrhám, ale nechám ho růst a sloužit dobrým věcem.
+Otevři mi cesty k novým příležitostem a zažeň ode mě chudobu a nedostatek.
+Přijímám tvé požehnání s vděčností a úctou.</div>
+            </div>
+
+            <div class="prayer-card">
+                <span class="prayer-icon">🧹</span>
+                <h3 class="prayer-title">Očistná modlitba domova</h3>
+                <span class="prayer-subtitle">Modlitba k vyhnání těžké energie, svárů a neklidu z tvého obydlí.</span>
+                <div class="prayer-text">Všeotče, vládče posvátných prostor, přicházím očistit toto místo.
+Volám tvou sílu, abys z mých stěn, rohů i prahů vyhnal všechno staré, těžké a zlé.
+Ať ze stínů zmizí stopy starých svárů, závisti a nemocí.
+Zapaluji tento oheň (nebo přináším tento kouř) ve tvém jménu, Ódine.
+Jak mizí dým, tak ať mizí vše, co sem nepatří.
+Ať se můj domov stane bezpečným útočištěm, pevností klidu a místem, kde sídlí radost.
+Dveře otevírám jen tvému požehnání a dobrým duchům této země.
+Můj domov je čistý a chráněný.</div>
+            </div>
+
+            <div class="prayer-card">
+                <span class="prayer-icon">📅</span>
+                <h3 class="prayer-title">Pondělní modlitba</h3>
+                <span class="prayer-subtitle">Modlitba na začátku týdne pro sílu, odhodlání a správné vedení.</span>
+                <div class="prayer-text">Sláva tobě, Ódine, na prahu nového týdne.
+Předem mnou leží sedm dní a nocí, neprozkoumaná cesta plná úkolů a výzev.
+Přicházím si pro tvé vedení na samém začátku.
+Dej mi jasnou vizi, abych věděl, kam směřuji, a pevnou vůli, abych nesešel z cesty při první překážce.
+Ať je tento týden plný vítězství – nad leností, nad strachem i nad pochybnostmi.
+Požehnej mým krokům od prvního ranního svítání až do chvíle, kdy týden skončí.
+Kráčím do těchto dní s vědomím, že Všeotec bdí nad mým osudem.</div>
+            </div>
+
+            <div class="prayer-card">
+                <span class="prayer-icon">🌌</span>
+                <h3 class="prayer-title">Za klidný odchod</h3>
+                <span class="prayer-subtitle">Hluboká modlitba za umírajícího nebo nedávno zesnulého blízkého člověka.</span>
+                <div class="prayer-text">Ódine, vůdče duší a pane Valhally, shlédni na toho, jehož čas v Midgardu se naplnil.
+(Jméno) dokončil/a svou pozemskou pouť a jeho/její nit osudu byla přestřižena.
+Prosím tě, Všeotče, buď mu/jí průvodcem na této poslední, tajemné cestě.
+Zažeň z jeho/její stezky strach a temnotu.
+Ať jsou křídla tvých valkýr jemná a donesou jeho/její duši tam, kam podle svých činů patří – do tvých síní, k našim předkům, nebo do tichého klidu.
+Dej nám, kteří zde zůstáváme, sílu unést žal a moudrost pochopit, že smrt je jen dalším krokem.
+Přijmi ho/ji se ctí, kterou si zaslouží.</div>
+            </div>
+
+            <div class="prayer-card">
+                <span class="prayer-icon">🌲</span>
+                <h3 class="prayer-title">Za pokoru a přijetí</h3>
+                <span class="prayer-subtitle">Modlitba ve chvílích, kdy je třeba přijmout to, co nelze změnit.</span>
+                <div class="prayer-text">Ódine, ty, který znáš váhu osudu a sám se skláníš před rozsudkem Norn u kořenů Yggdrasilu,
+přicházím k tobě s prosbou o vnitřní klid.
+Zbav mě pýchy, která mi namlouvá, že mohu ovládat celý svět.
+Dej mi pokoru přijmout rány, které nemohu odvrátit, a zkoušky, které mi osud postavil do cesty.
+Nauč mě vidět moudrost i v porážkách a ztrátách.
+Vím, že i ta nejtvrdší zima nakonec ustoupí jaru.
+Přijímám svůj podíl na tomto světě se vztyčenou hlavou, bez hořkosti a s důvěrou,
+že mě každá bouře jen zoceluje pro věci příští.
+Tvá vůle buď mým zákonem.</div>
+            </div>
+
+            <div class="prayer-card">
+                <span class="prayer-icon">🛡️</span>
+                <h3 class="prayer-title">Pro oddané (Modlitba věrnosti)</h3>
+                <span class="prayer-subtitle">Hluboké osobní vyznání víry, věrnosti a oddanosti Všeotci.</span>
+                <div class="prayer-text">Všeotče, Pane padlých a vládče run,
+zde stojím, tvůj věrný služebník, a obnovuji svůj slib.
+Tvůj hlas slyším ve větru, tvou moudrost hledám v temnotě i světle.
+Zasvětil jsem svou cestu tvému jménu a nelituji toho.
+Ať mé činy dělají čest tvému rodu a mé slovo je pevné jako skála.
+Nabízím ti svou mysl k učení, své paže k práci a své srdce k boji za to, co je správné.
+Kráčím světem pod tvým znamením a vím, že nejsem sám.
+V životě i v smrti, v radosti i v žalu – mé srdce patří tobě, Ódine.</div>
+            </div>
+
+            <div class="prayer-card">
+                <span class="prayer-icon">✨</span>
+                <h3 class="prayer-title">Čistá vděčnost</h3>
+                <span class="prayer-subtitle">Modlitba za dar života a krásu světa, bez proseb.</span>
+                <div class="prayer-text">Ódine, dnes nepřicházím s prosbou, ani nežádám o tvou pomoc.
+Přicházím jen proto, abych ti poděkoval z celého srdce.
+Děkuji za vzduch, který dýchám, za slunce, které mě hřeje, i za déšť, který dává život zemi.
+Děkuji za sílu ve svých svalech a za oheň ve své duši.
+Jsem vděčný za každý den v tomto nádherném a divokém Midgardu,
+za přátele, rodinu a za možnost růst a poznávat svět.
+Tvůj dar života je velký a já ho přijímám s úctou.
+Sláva tobě, Všeotče, za všechno, co bylo, co je a co teprve přijde.</div>
+            </div>
+
+            <div class="prayer-card">
+                <span class="prayer-icon">🔥</span>
+                <h3 class="prayer-title">Za probuzení vnitřního ohně</h3>
+                <span class="prayer-subtitle">Modlitba k Ódinovi jako patronu extáze a tvůrčí síly.</span>
+                <div class="prayer-text">Ódine, ty, který jsi ukradl medovinu básnictví, aby ses o ni podělil s bohy a lidmi,
+shlédni na mě v mé vyprahlosti.
+Cítím se chladný, unavený a bez jiskry.
+Volám tě, Všeotče, vdechni do mé duše posvátný neklid a probuď můj vnitřní oheň.
+Ať se mé srdce rozbuší nadšením a má mysl zaplane novými nápady.
+Daruj mi divokost severské bouře i hlubokou inspiraci pro mé tvoření, práci i život.
+Ať skrze mé činy a slova mluví tvá nespoutaná síla.
+Probuď mě k životu!</div>
+            </div>
+
+            <div class="prayer-card">
+                <span class="prayer-icon">🌲</span>
+                <h3 class="prayer-title">Úcta k lesu a přírodě</h3>
+                <span class="prayer-subtitle">Modlitba při vstupu do lesa a uctění sil Midgardu.</span>
+                <div class="prayer-text">Všeotče, stvořiteli tohoto světa z těla prastarého Ymira,
+vstupuji pod koruny tvých stromů s tichou úctou v srdci.
+Zde, kde voní jehličí a mluví vítr, cítím tvou přítomnost nejhlouběji.
+Děkuji ti za divokou krásu Midgardu, za dravou zvěř i tichý mech.
+Prosím tě, dovol mi projít tímto posvátným prostorem jako host, který neničí, ale chrání.
+Požehnej duchům tohoto místa a dovol mé duši splynout s klidem země.
+Kráčím tvým světem v míru a s pokorou.</div>
+            </div>
+
+            <div class="prayer-card">
+                <span class="prayer-icon">⚖️</span>
+                <h3 class="prayer-title">Za spravedlnost a pravdu</h3>
+                <span class="prayer-subtitle">Modlitba ve chvíli, kdy čelíš nespravedlnosti nebo sporu.</span>
+                <div class="prayer-text">Ódine, nejvyšší soudce, který z trůnu Hlidskjálfu vidíš do všech koutů světa,
+přicházím k tobě, když pravda hyne pod nánosem lží.
+Čelím bezpráví a lidské zlobě, která mi chce uškodit.
+Vezmi do ruky své kopí Gungnir, které nikdy nemine cíl, a prosekej se skrze ty klamy.
+Ať pravda vyjde najevo jako slunce po bouři.
+Dej mi pevnou páteř, abych neuhnul před nespravedlností,
+a moudrost, abych nejednal v pouhém vzteku, ale s chladnou hlavou.
+Tvá spravedlnost je mým štítem a tvé oko vidí mou čistotu.</div>
+            </div>
+
+            <div class="prayer-card">
+                <span class="prayer-icon">🤝</span>
+                <h3 class="prayer-title">Za pevné přátelství</h3>
+                <span class="prayer-subtitle">Modlitba za ochranu přátel, lojalitu a věrnost v komunitě.</span>
+                <div class="prayer-text">Ódine, který víš, jakou cenu má věrný společník na nebezpečných cestách,
+žehnej těm, které nazývám svými přáteli a bratry.
+Děkuji ti za lidi, kteří stojí po mém boku, když se nebe zatáhne.
+Ať je naše pouto pevné jako staré runy vytesané do skály.
+Chraň nás před zradou, nedorozuměním a skrytou závistí.
+Dej nám sílu společně slavit vítězství, ale i krýt si záda v dobách nouze.
+Ať u našeho společného stolu vždy vládne upřímnost a čest.
+Naše spojenectví je naší silou.</div>
+            </div>
+
+            <div class="prayer-card">
+                <span class="prayer-icon">👶</span>
+                <h3 class="prayer-title">Za novorozené dítě</h3>
+                <span class="prayer-subtitle">Modlitba pro uvítání nového života a vyprošení ochrany.</span>
+                <div class="prayer-text">Sláva tobě, Ódine, Všeotče, dárci dechu a života!
+Do našeho rodu přišel nový život, čistý a křehký jako jarní pupen.
+Přicházím před tebe, abych ti ukázal/a toto dítě (jméno, pokud již bylo dáno) a požádal o tvé požehnání.
+Vdechni mu do hrudi odvahu severských vlků a moudrost tvých havranů.
+Ať roste v síle, pevné na těle i na duchu, a ať jsou jeho kroky na Midgardu pevné a jisté.
+Prosím tě, rozprostři nad ním svá ochranná křídla, aby ho minuly nemoci, zrada a zlé pohledy.
+Přijmi toto dítě pod svou ochranu, Všeotče.
+Je krví naší krve a pokračováním našeho rodu.</div>
+            </div>
+
+            <div class="prayer-card">
+                <span class="prayer-icon">🪵</span>
+                <h3 class="prayer-title">Za přechod do dospělosti</h3>
+                <span class="prayer-subtitle">Modlitba pro mladého člověka, který přebírá zodpovědnost za svůj osud.</span>
+                <div class="prayer-text">Ódine, vládče zkoušek a zasvěcení, ty, který víš, co znamená projít ohněm a transformací,
+shlédni na tohoto mladého muže / tuto mladou ženu (jméno).
+Čas her a dětství skončil a před ním/ní leží cesta dospělých – cesta zodpovědnosti, činů a vlastního osudu.
+Dej mu/jí sílu runy Uruz, aby pevně čelil/a výzvám, které život přinese.
+Vlož mu/jí do srdce čest, aby jeho/její slovo mělo váhu a jeho/její činy dělaly hrdým celý náš rod.
+Pomoz mu/jí utkat vlastní osud s moudrostí a odvahou, bez strachu z chyb, které člověka učí.
+Ať zanechá dětské slabosti za sebou a vykročí do světa jako plnohodnotný ochránce a tvůrce naší budoucnosti.
+Požehnej tomuto novému začátku.</div>
+            </div>
+
+        </div>
+
+        <!-- Nová Sekce: Generátor jmen -->
+        <section class="section" style="margin-top: 5rem;">
+            <h2>Generátor severských jmen</h2>
+            <p style="text-align: center;">Zadej své křestní jméno a zjisti, jak by tě zvali v síních Valhally.</p>
+            <div class="interactive-generator">
+                <input type="text" id="nameGenInput" class="text-input" placeholder="Tvé křestní jméno..." autocomplete="off">
+                <button class="btn btn-primary" id="generateNameBtn">Odhal své pravé jméno</button>
+                <div id="nameDisplay" class="name-display"></div>
+            </div>
+        </section>
+
+        <!-- Nová Sekce: Kvíz -->
+        <section class="section" id="quizSection">
+            <h2>Jaká je tvá role v Midgardu?</h2>
+            <p style="text-align: center;">Odpověz upřímně na 5 otázek a zjisti, kým jsi v očích Všeotce.</p>
+            <div id="quizContainer" class="quiz-container">
+                <div id="quizQuestion" class="quiz-question"></div>
+                <div id="quizOptions" class="quiz-options"></div>
+                
+                <div id="quizResult" class="quiz-result">
+                    <h3 id="resultTitle"></h3>
+                    <p id="resultDesc"></p>
+                    <button class="btn btn-primary" id="restartQuizBtn" style="margin-top: 1.5rem;">Zkusit znovu</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Nová Sekce: Runová Kaligrafie -->
+        <section class="section">
+            <h2>Runová kaligrafie</h2>
+            <p style="text-align: center;">Napiš své jméno nebo krátký vzkaz v běžné abecedě a sleduj, jak se mění v prastarý Futhark. Následně si můžeš svůj runový nápis stáhnout jako obrázek.</p>
+            
+            <div class="interactive-generator">
+                <input type="text" id="runeInput" class="text-input" placeholder="Zadej text..." autocomplete="off">
+                <div id="runeDisplay" class="rune-display"></div>
+                <button class="btn btn-primary" id="downloadRuneBtn">Uložit nápis jako obrázek</button>
+            </div>
+        </section>
+
+        <!-- Nová Sekce: Mobilní tapety -->
+        <section class="section">
+            <h2>Mobilní tapety ke stažení</h2>
+            <p style="text-align: center;">Ozdob svůj Midgard (telefon) těmito posvátnými výjevy. Kliknutím na obrázek si tapetu stáhneš.</p>
+            <div class="wallpapers-grid">
+                <a href="1.png" download="Odin_Tapeta_1.png" class="wallpaper-item" title="Stáhnout tapetu 1"><img src="1.png" alt="Tapeta 1"></a>
+                <a href="2.png" download="Odin_Tapeta_2.png" class="wallpaper-item" title="Stáhnout tapetu 2"><img src="2.png" alt="Tapeta 2"></a>
+                <a href="3.png" download="Odin_Tapeta_3.png" class="wallpaper-item" title="Stáhnout tapetu 3"><img src="3.png" alt="Tapeta 3"></a>
+                <a href="4.png" download="Odin_Tapeta_4.png" class="wallpaper-item" title="Stáhnout tapetu 4"><img src="4.png" alt="Tapeta 4"></a>
+                <a href="5.png" download="Odin_Tapeta_5.png" class="wallpaper-item" title="Stáhnout tapetu 5"><img src="5.png" alt="Tapeta 5"></a>
+                <a href="6.png" download="Odin_Tapeta_6.png" class="wallpaper-item" title="Stáhnout tapetu 6"><img src="6.png" alt="Tapeta 6"></a>
+                <a href="7.png" download="Odin_Tapeta_7.png" class="wallpaper-item" title="Stáhnout tapetu 7"><img src="7.png" alt="Tapeta 7"></a>
+            </div>
+        </section>
+
+        <!-- Sekce 5: Odkazy -->
+        <section class="section">
+            <h2>Odkazy</h2>
+            <ul class="links-list">
+                <li><a href="https://cs.wikipedia.org/wiki/%C3%93din" target="_blank" rel="noopener noreferrer">https://cs.wikipedia.org/wiki/Ódin</a></li>
+                <li><a href="https://en.wikipedia.org/wiki/Odin" target="_blank" rel="noopener noreferrer">https://en.wikipedia.org/wiki/Odin</a></li>
+                <li><a href="https://grokipedia.com/page/Odin" target="_blank" rel="noopener noreferrer">https://grokipedia.com/page/Odin</a></li>
+            </ul>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Ódinova Svatyně | <strong>o-din.xyz</strong></p>
+        <p style="font-size: 0.8rem; opacity: 0.6; margin-top: 0.5rem;">Cesta k moudrosti je věčná.</p>
+    </footer>
+
+    <!-- Cookies lišta EU/CZ -->
+    <div class="cookie-banner" id="cookieBanner">
+        <div class="cookie-content">
+            <h4>Nastavení soukromí a run (Cookies)</h4>
+            <p>Tato svatyně (web) používá technologie jako cookies, abychom zajistili správný chod našich svitků a pochopili cesty návštěvníků. Kliknutím na „Přijmout vše“ nám dáte svolení ke zpracování dat v souladu s legislativou EU a ČR. Svá nastavení můžete kdykoli změnit.</p>
+        </div>
+        <div class="cookie-buttons">
+            <button class="btn btn-primary" id="acceptAllBtn">Přijmout vše</button>
+            <button class="btn" id="rejectBtn">Pouze nezbytné</button>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            
+            /* --- LOGIKA OLTÁŘE (Carousel) --- */
+            const images = document.querySelectorAll('.carousel-img');
+            let currentIndex = 0;
+
+            if(images.length > 0) {
+                setInterval(() => {
+                    images[currentIndex].classList.remove('active');
+                    currentIndex = (currentIndex + 1) % images.length;
+                    images[currentIndex].classList.add('active');
+                }, 4000);
+            }
+
+            /* --- LOGIKA BLÓT (CANDLE / MEAD) --- */
+            const blotCandleBtn = document.getElementById('blotCandle');
+            const blotMeadBtn = document.getElementById('blotMead');
+            const blotMessage = document.getElementById('blotMessage');
+            let blotTimeout;
+
+            const showBlotMessage = (text) => {
+                clearTimeout(blotTimeout);
+                blotMessage.textContent = text;
+                blotMessage.classList.add('show');
+                blotTimeout = setTimeout(() => {
+                    blotMessage.classList.remove('show');
+                }, 3500);
+            };
+
+            if (blotCandleBtn && blotMeadBtn) {
+                blotCandleBtn.addEventListener('click', () => showBlotMessage('Svíce byla zapálena. Tvá oběť stoupá k Ásgardu.'));
+                blotMeadBtn.addEventListener('click', () => showBlotMessage('Medovina byla rozlita. Všeotec přijímá tvůj dar.'));
+            }
+
+            /* --- LOGIKA RUNOVÁ KALIGRAFIE --- */
+            const runeMap = {
+                'a': 'ᚨ', 'b': 'ᛒ', 'c': 'ᚲ', 'd': 'ᛞ', 'e': 'ᛖ', 'f': 'ᚠ', 'g': 'ᚷ', 'h': 'ᚺ',
+                'i': 'ᛁ', 'j': 'ᛃ', 'k': 'ᚲ', 'l': 'ᛚ', 'm': 'ᛗ', 'n': 'ᚾ', 'o': 'ᛟ', 'p': 'ᛈ',
+                'q': 'ᚲ', 'r': 'ᚱ', 's': 'ᛋ', 't': 'ᛏ', 'u': 'ᚢ', 'v': 'ᚹ', 'w': 'ᚹ', 'x': 'ᛋ',
+                'y': 'ᛃ', 'z': 'ᛉ', ' ': ' ',
+                'á': 'ᚨ', 'č': 'ᚲ', 'ď': 'ᛞ', 'é': 'ᛖ', 'ě': 'ᛖ', 'í': 'ᛁ', 'ň': 'ᚾ', 'ó': 'ᛟ',
+                'ř': 'ᚱ', 'š': 'ᛋ', 'ť': 'ᛏ', 'ú': 'ᚢ', 'ů': 'ᚢ', 'ý': 'ᛁ', 'ž': 'ᛉ'
+            };
+
+            const runeInput = document.getElementById('runeInput');
+            const runeDisplay = document.getElementById('runeDisplay');
+            const downloadRuneBtn = document.getElementById('downloadRuneBtn');
+
+            if (runeInput && runeDisplay) {
+                runeInput.addEventListener('input', (e) => {
+                    const text = e.target.value.toLowerCase();
+                    let translated = '';
+                    for (let char of text) {
+                        translated += runeMap[char] || char;
+                    }
+                    runeDisplay.textContent = translated;
+                });
+
+                downloadRuneBtn.addEventListener('click', () => {
+                    const text = runeDisplay.textContent;
+                    if (!text) return;
+
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 1000;
+                    canvas.height = 400;
+                    const ctx = canvas.getContext('2d');
+
+                    // Pozadí obrazu
+                    ctx.fillStyle = '#0d1117';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                    // Rámeček s patinou
+                    ctx.strokeStyle = '#997a00';
+                    ctx.lineWidth = 4;
+                    ctx.strokeRect(15, 15, canvas.width - 30, canvas.height - 30);
+
+                    // Samotný runový text
+                    ctx.fillStyle = '#d4af37';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.font = 'bold 80px "Segoe UI Symbol", sans-serif';
+                    ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+
+                    // Text v zápatí obrázku
+                    ctx.font = '18px sans-serif';
+                    ctx.fillStyle = '#8b949e';
+                    ctx.fillText('Vygenerováno v Ódinově svatyni | o-din.xyz', canvas.width / 2, canvas.height - 40);
+
+                    // Stažení obrázku
+                    const link = document.createElement('a');
+                    link.download = 'runovy-napis.png';
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                });
+            }
+
+            /* --- LOGIKA GENERÁTOR SEVERSKÝCH JMEN --- */
+            const nameGenInput = document.getElementById('nameGenInput');
+            const generateNameBtn = document.getElementById('generateNameBtn');
+            const nameDisplay = document.getElementById('nameDisplay');
+
+            const namesMap = {
+                'petr': 'Péturr', 'jan': 'Jóhann', 'jakub': 'Jákobr', 'tomas': 'Tómas', 
+                'martin': 'Marteinn', 'michal': 'Mikjáll', 'ondrej': 'Andrés', 'jiri': 'Gjörgr',
+                'matej': 'Matthías', 'lukas': 'Lúkas', 'david': 'Dávíð', 'vaclav': 'Vatnsláfr',
+                'karel': 'Karl', 'pavel': 'Páll', 'milan': 'Mílan', 'josef': 'Jósef',
+                'anna': 'Ásta', 'lucie': 'Lúsía', 'eva': 'Efa', 'katerina': 'Katrín',
+                'lenka': 'Línka', 'veronika': 'Vera', 'tereza': 'Teresía', 'marie': 'María',
+                'jana': 'Jóhanna', 'eliska': 'Elísa', 'marketa': 'Margrét', 'zuzana': 'Súsanna'
+            };
+
+            const titlesMale = [
+                'Železnoruký', 'Krvavá sekyra', 'Moudrý', 'Drtič štítů', 'Poutník', 
+                'Tichý', 'Vlčí bratr', 'Hromový hlas', 'Stříbrooký', 'Medvědí bijec',
+                'Drakobijce', 'Oko havrana', 'Strážce run'
+            ];
+
+            const titlesFemale = [
+                'Štítonošská', 'Moudrá', 'Zlatovlasá', 'Poutnice', 'Tichá',
+                'Vlčí sestra', 'Jasnozřivá', 'Stříbrooká', 'Dcera severu',
+                'Strážkyně run', 'Dračí dech', 'Havraní panna'
+            ];
+
+            if (generateNameBtn) {
+                generateNameBtn.addEventListener('click', () => {
+                    const val = nameGenInput.value.trim();
+                    if(!val) return;
+                    
+                    // Normalizace (odstranění diakritiky a převod na malá písmena)
+                    const cleanVal = val.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+                    
+                    let norseName = namesMap[cleanVal];
+                    if (!norseName) {
+                        norseName = val.charAt(0).toUpperCase() + val.slice(1).toLowerCase();
+                        if(!cleanVal.endsWith('r') && !cleanVal.endsWith('a') && !cleanVal.endsWith('i') && !cleanVal.endsWith('y')) {
+                            norseName += 'r';
+                        }
+                    }
+                    
+                    const isFemale = cleanVal.endsWith('a') || cleanVal.endsWith('e');
+                    const titleList = isFemale ? titlesFemale : titlesMale;
+                    
+                    // Generování indexu titulu na základě znaků jména (stejné jméno = stejný titul)
+                    const hash = cleanVal.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+                    const title = titleList[hash % titleList.length];
+                    
+                    nameDisplay.textContent = `${norseName} ${title}`;
+                });
+            }
+
+            /* --- LOGIKA KVÍZ - ROLE V MIDGARDU --- */
+            const questions = [
+                {
+                    q: "Co je tvou nejsilnější zbraní?",
+                    a: [
+                        { text: "A) Meč a nezdolná síla", role: "bojovnik" },
+                        { text: "B) Slovo a dobrá paměť", role: "skald" },
+                        { text: "C) Intuice a vnímání neviděného", role: "vedma" },
+                        { text: "D) Rozhled a zkušenosti z cest", role: "poutnik" }
+                    ]
+                },
+                {
+                    q: "Jak bys nejraději trávil(a) dlouhé zimní večery?",
+                    a: [
+                        { text: "A) Tréninkem a údržbou své výbavy", role: "bojovnik" },
+                        { text: "B) Vyprávěním starých ság u ohně", role: "skald" },
+                        { text: "C) Čtením run a hleděním do plamenů", role: "vedma" },
+                        { text: "D) Plánováním další dlouhé výpravy", role: "poutnik" }
+                    ]
+                },
+                {
+                    q: "Které zvíře tě nejvíce přitahuje?",
+                    a: [
+                        { text: "A) Vlk (odvaha a smečka)", role: "bojovnik" },
+                        { text: "B) Káně nebo Sokol (bystrost)", role: "skald" },
+                        { text: "C) Had (skrytá moudrost a transformace)", role: "vedma" },
+                        { text: "D) Havran (vědění a rozhled)", role: "poutnik" }
+                    ]
+                },
+                {
+                    q: "Co je tvým konečným cílem?",
+                    a: [
+                        { text: "A) Sláva a místo u stolu ve Valhalle", role: "bojovnik" },
+                        { text: "B) Nesmrtelnost skrze příběhy a písně", role: "skald" },
+                        { text: "C) Pochopení nejhlubších tajemství Yggdrasilu", role: "vedma" },
+                        { text: "D) Absolutní svoboda a prozkoumání všech světů", role: "poutnik" }
+                    ]
+                },
+                {
+                    q: "Když před tebou vyvstane obrovská překážka, jak ji řešíš?",
+                    a: [
+                        { text: "A) Prorazím ji silou, bez ohledu na následky", role: "bojovnik" },
+                        { text: "B) Najdu spojence a přesvědčím je k pomoci", role: "skald" },
+                        { text: "C) Použiji magii nebo vnitřní klid k jejímu překonání", role: "vedma" },
+                        { text: "D) Obejdu ji a najdu zcela novou stezku", role: "poutnik" }
+                    ]
+                }
+            ];
+
+            const quizResultsData = {
+                "bojovnik": { title: "Bojovník (Einherjar)", desc: "Tvá síla a odvaha z tebe činí pravého válečníka. Nehledáš omluvy, hledáš řešení. Tvým osudem je chránit slabší a tvým místem je Valhalla." },
+                "skald": { title: "Skald (Básník)", desc: "Máš vzácný dar slova. Víš, že meče reznou, ale příběhy trvají věčně. Tvá moudrost a písně inspirují ostatní k velkým činům." },
+                "vedma": { title: "Vědma / Seidmadr", desc: "Vidíš to, co je ostatním skryto. Tvé spojení s runami, s magií Seiðr a intuicí tě činí tajemným a nesmírně mocným průvodcem osudu." },
+                "poutnik": { title: "Poutník", desc: "Stejně jako Ódin v přestrojení, i ty hledáš neustále nové obzory. Svoboda a nekončící poznání jsou pro tebe cennější než všechno zlato Midgardu." }
+            };
+
+            let currentQuestion = 0;
+            let scores = { bojovnik: 0, skald: 0, vedma: 0, poutnik: 0 };
+
+            const quizQuestionEl = document.getElementById('quizQuestion');
+            const quizOptionsEl = document.getElementById('quizOptions');
+            const quizResultEl = document.getElementById('quizResult');
+            const resultTitleEl = document.getElementById('resultTitle');
+            const resultDescEl = document.getElementById('resultDesc');
+            const restartQuizBtn = document.getElementById('restartQuizBtn');
+
+            function loadQuestion() {
+                quizResultEl.style.display = 'none';
+                quizQuestionEl.style.display = 'block';
+                quizOptionsEl.style.display = 'flex';
+                quizOptionsEl.innerHTML = '';
+                
+                if(currentQuestion < questions.length) {
+                    quizQuestionEl.textContent = `${currentQuestion + 1}. ${questions[currentQuestion].q}`;
+                    questions[currentQuestion].a.forEach(option => {
+                        const btn = document.createElement('button');
+                        btn.className = 'quiz-btn';
+                        btn.textContent = option.text;
+                        btn.onclick = () => answerQuestion(option.role);
+                        quizOptionsEl.appendChild(btn);
+                    });
+                } else {
+                    showResult();
+                }
+            }
+
+            function answerQuestion(role) {
+                scores[role]++;
+                currentQuestion++;
+                loadQuestion();
+            }
+
+            function showResult() {
+                quizQuestionEl.style.display = 'none';
+                quizOptionsEl.style.display = 'none';
+                
+                // Nalezení role s nejvíce body
+                let topRole = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
+                
+                resultTitleEl.textContent = quizResultsData[topRole].title;
+                resultDescEl.textContent = quizResultsData[topRole].desc;
+                quizResultEl.style.display = 'flex';
+            }
+
+            if (restartQuizBtn) {
+                restartQuizBtn.addEventListener('click', () => {
+                    currentQuestion = 0;
+                    scores = { bojovnik: 0, skald: 0, vedma: 0, poutnik: 0 };
+                    loadQuestion();
+                });
+            }
+            
+            // Inicializace kvízu
+            if(quizQuestionEl) loadQuestion();
+
+
+            /* --- LOGIKA COOKIES LIŠTY --- */
+            const cookieBanner = document.getElementById('cookieBanner');
+            const acceptBtn = document.getElementById('acceptAllBtn');
+            const rejectBtn = document.getElementById('rejectBtn');
+
+            const cookieConsent = localStorage.getItem('odin_cookie_consent');
+
+            if (!cookieConsent) {
+                setTimeout(() => {
+                    cookieBanner.classList.add('show');
+                }, 1000);
+            }
+
+            const setConsent = (level) => {
+                localStorage.setItem('odin_cookie_consent', level);
+                cookieBanner.classList.remove('show');
+            };
+
+            if (acceptBtn && rejectBtn) {
+                acceptBtn.addEventListener('click', () => setConsent('all'));
+                rejectBtn.addEventListener('click', () => setConsent('essential'));
+            }
+        });
+    </script>
+</body>
+</html>
